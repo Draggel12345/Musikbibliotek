@@ -36,11 +36,10 @@ namespace Musikbibliotek.Data
                 AlbumEntity? album = await _context.Albums.FirstOrDefaultAsync(a => a.Id == entity.AlbumId);
                 if (album != null)
                 {
-                    entity.Album = album;
-
                     ArtistEntity? artist = await _context.Artists.FirstOrDefaultAsync(a => a.Id == album.ArtistId);
                     if (artist != null)
                     {
+                        entity.Album = album;
                         entity.ArtistId = artist.Id;
                         entity.ArtistName = artist.Name;
 
@@ -81,32 +80,34 @@ namespace Musikbibliotek.Data
 
             if (artist != null)
             {
-                SongEntity? old = await _context.Songs.FirstOrDefaultAsync(s => s.ArtistId == artist.Id);
+                AlbumEntity? album = await _context.Albums.FirstOrDefaultAsync(s => s.ArtistId == artist.Id);
 
-                if (old != null)
+                if (album != null)
                 {
-                    if (!string.IsNullOrEmpty(request.Name) && !string.IsNullOrWhiteSpace(request.Name))
-                        old.Name = request.Name;
+                    SongEntity? old = await _context.Songs.FirstOrDefaultAsync(s => s.AlbumId == album.Id);
 
-                    if (request.SongLength != 0)
-                        old.SongLength = TimeSpan.FromSeconds(request.SongLength);
+                    if (old != null)
+                    {
+                        if (!string.IsNullOrEmpty(request.Name) && !string.IsNullOrWhiteSpace(request.Name))
+                            old.Name = request.Name;
 
-                    if (request.AlbumId != 0 && !await _context.Albums.AnyAsync(a => a.Id == request.AlbumId))
-                        old.AlbumId = request.AlbumId;
+                        if (request.SongLength != 0)
+                            old.SongLength = TimeSpan.FromSeconds(request.SongLength);
 
-                    //if (request.ArtistId != 0 && old.ArtistId != request.ArtistId)
-                    //    old.ArtistId = request.ArtistId;
+                        if (request.AlbumId != 0 && !await _context.Albums.AnyAsync(a => a.Id == request.AlbumId))
+                            old.AlbumId = request.AlbumId;
 
-                    //if (!string.IsNullOrEmpty(request.ArtistName) && !string.IsNullOrWhiteSpace(request.ArtistName))
-                    //    old.ArtistName = request.Name;
+                        old.Album = album;
+                        old.ArtistId = artist.Id;
+                        old.ArtistName = artist.Name;
 
-                    _context.Entry(old).State = EntityState.Modified;
-                    await _context.SaveChangesAsync();
+                        _context.Entry(old).State = EntityState.Modified;
+                        await _context.SaveChangesAsync();
 
-                    return old;
+                        return old;
+                    }
                 }
             }
-
 
             return null!;
         }

@@ -34,14 +34,6 @@ namespace Musikbibliotek.Data
                 if (artist != null)
                 {
                     entity.Artist = artist;
-                    //SongEntity? song = await _context.Songs.FirstOrDefaultAsync(a => a.ArtistId == artist.Id);
-
-                    //if (song != null)
-                    //    entity.Songs.Add(song);
-
-                    /*
-                     Fixa så albums sång-lista visar sångerna!
-                     */
 
                     _context.Albums.Add(entity);
                     await _context.SaveChangesAsync();
@@ -55,12 +47,12 @@ namespace Musikbibliotek.Data
 
         public async Task<IEnumerable<AlbumEntity>> GetAllAlbumsAsync()
         {
-            return await _context.Albums.Include(a => a.Songs).ToListAsync();
+            return await _context.Albums.Include(a => a.Artist).Include(s => s.Songs).ToListAsync();
         }
 
         public async Task<AlbumEntity> GetAlbumByIdAsync(int id)
         {
-            AlbumEntity? entity = await _context.Albums.Include(a => a.Songs).FirstOrDefaultAsync(a => a.Id == id);
+            AlbumEntity? entity = await _context.Albums.Include(a => a.Artist).Include(a => a.Songs).FirstOrDefaultAsync(a => a.Id == id);
             if (entity != null)
             {
                 return entity;
@@ -80,7 +72,7 @@ namespace Musikbibliotek.Data
                     if (!string.IsNullOrEmpty(request.Name) && !string.IsNullOrWhiteSpace(request.Name))
                         old.Name = request.Name;
 
-                    if (old.ArtistId != 0 && old.ArtistId != request.ArtistId)
+                    if (old.ArtistId != 0 && !await _context.Artists.AnyAsync(a => a.Id == request.ArtistId))
                         old.ArtistId = request.ArtistId;
 
                     _context.Entry(old).State = EntityState.Modified;

@@ -61,13 +61,25 @@ namespace Musikbibliotek.Data
             ArtistEntity old = await GetArtistByIdAsync(id);
             if (old != null)
             {
-                if (!string.IsNullOrEmpty(request.Name) && !string.IsNullOrWhiteSpace(request.Name))
-                    old.Name = request.Name;
+                AlbumEntity? album = await _context.Albums.FirstOrDefaultAsync(a => a.Id == old.Id);
 
-                _context.Entry(old).State = EntityState.Modified;
-                await _context.SaveChangesAsync();
+                if (album != null)
+                {
+                    SongEntity? song = await _context.Songs.FirstOrDefaultAsync(s => s.ArtistId == album.Id);
+                    if (song != null)
+                    {
+                        if (!string.IsNullOrEmpty(request.Name) && !string.IsNullOrWhiteSpace(request.Name))
+                            old.Name = request.Name;
 
-                return old;
+                        song.ArtistId = old.Id;
+                        song.ArtistName = old.Name;
+
+                        _context.Entry(old).State = EntityState.Modified;
+                        await _context.SaveChangesAsync();
+
+                        return old;
+                    }
+                }
             }
 
             return null!;

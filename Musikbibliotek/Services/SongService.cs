@@ -31,12 +31,7 @@ namespace Musikbibliotek.Services
 
             if (entity != null)
             {
-                SongDTOResult result = new();
-                result.SongInfo = $"{entity.Id} {entity.Name} {entity.SongLength.ToString(@"mm\:ss")}";
-                result.ArtistInfo = $"{entity.ArtistId} {entity.ArtistName}";
-                result.AlbumInfo = $"{entity.AlbumId} {entity.Album.Name}";
-
-                return result;
+                return _mapper.Map<SongDTOResult>(entity);
             }
 
             throw new ArgumentNullException(nameof(request));
@@ -48,12 +43,7 @@ namespace Musikbibliotek.Services
             var list = await _repo.GetAllSongsAsync();
             foreach (var item in list)
             {
-                SongDTOResult song = new();
-                song.SongInfo = $"{item.Id} {item.Name}";
-                song.ArtistInfo = $"{item.ArtistId} {item.ArtistName}";
-                song.AlbumInfo = $"{item.AlbumId} {item.Album.Name}";
-
-                result.Add(song);
+                result.Add(_mapper.Map<SongDTOResult>(item));
             }
 
             return result.ToList();
@@ -64,12 +54,7 @@ namespace Musikbibliotek.Services
             SongEntity entity = await _repo.GetSongByIdAsync(id);
             if (entity != null)
             {
-                SongDTOResult result = new();
-                result.SongInfo = $"{entity.Id} {entity.Name}";
-                result.ArtistInfo = $"{entity.ArtistId} {entity.ArtistName}";
-                result.AlbumInfo = $"{entity.AlbumId} {entity.Album.Name}";
-
-                return result;
+                return _mapper.Map<SongDTOResult>(entity);
             }
 
             throw new ArgumentNullException(nameof(id));
@@ -80,12 +65,7 @@ namespace Musikbibliotek.Services
             SongEntity entity = await _repo.UpdateSongAsync(id, request);
             if (entity != null)
             {
-                SongDTOResult result = new();
-                result.SongInfo = $"{entity.Id} {entity.Name}";
-                result.ArtistInfo = $"{entity.ArtistId} {entity.ArtistName}";
-                result.AlbumInfo = $"{entity.AlbumId} {entity.Album.Name}";
-
-                return result;
+                return _mapper.Map<SongDTOResult>(entity);
             }
 
             throw new ArgumentNullException(nameof(id), nameof(request));

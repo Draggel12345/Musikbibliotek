@@ -23,15 +23,6 @@ builder.Services.AddScoped<ISongService, SongService>();
 
 var app = builder.Build();
 
-
-/*
-
-Create Service layer for all classes and mapp them to dtoResult.
-Make sure that the mapping is correct so Artist returns list of albums,
-Albums returns list of songs and Song returns its album and artist.
-
- */
-
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {

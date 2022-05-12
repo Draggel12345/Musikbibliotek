@@ -65,6 +65,42 @@ namespace Musikbibliotek.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.InsertData(
+                table: "Artists",
+                columns: new[] { "Id", "Name" },
+                values: new object[,]
+                {
+                    { 1, "AC/DC" },
+                    { 2, "KORN" },
+                    { 3, "System Of A Down" },
+                    { 4, "Linkin Park" },
+                    { 5, "Iron Maiden" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Albums",
+                columns: new[] { "Id", "ArtistId", "Name" },
+                values: new object[,]
+                {
+                    { 1, 1, "Power Up" },
+                    { 2, 2, "Requiem" },
+                    { 3, 3, "Mezmerize" },
+                    { 4, 4, "Meteora" },
+                    { 5, 5, "Powerslave" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Songs",
+                columns: new[] { "Id", "AlbumId", "ArtistId", "ArtistName", "Name", "SongLength" },
+                values: new object[,]
+                {
+                    { 1, 1, 1, "AC/DC", "Shot In The Dark", new TimeSpan(0, 0, 3, 3, 0) },
+                    { 2, 2, 2, "KORN", "Forgotten", new TimeSpan(0, 0, 3, 10, 0) },
+                    { 3, 3, 3, "System Of A Down", "B.Y.O.B", new TimeSpan(0, 0, 4, 9, 0) },
+                    { 4, 4, 4, "Linkin Park", "Faint", new TimeSpan(0, 0, 2, 25, 0) },
+                    { 5, 5, 5, "Iron Maiden", "Aces High", new TimeSpan(0, 0, 4, 19, 0) }
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_Albums_ArtistId",
                 table: "Albums",
